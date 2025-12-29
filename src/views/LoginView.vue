@@ -1,7 +1,7 @@
 <template>
     <main class="d-flex justify-content-center align-items-center vh-100">
       <form class="border p-4 rounded shadow-sm" v-on:submit.prevent="login" style="width: 100%; max-width: 400px;">
-        <h1 class="mb-4 text-center">Logowanie</h1>
+        <h2 class="mb-4 text-center">Logowanie</h2>
 
         <div class="mb-3">
           <label class="form-label">Login</label>
