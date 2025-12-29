@@ -100,7 +100,7 @@ EKRANY APLIKACJI - WSPÓLNE
 LOGOWANIE
 Jeżeli użytkownik nie posiada autentykacji (pobrany token) aplikacja przekierowuje go do ekranu logowania. Na ekranie logowania do formularza wpisuje login oraz hasło i naciska przycisk "Zaloguj". Korzystając w wygenerowanej biblioteki (OpenApi) wysyłamy żądanie autentykacyjne do serwera. Jeżeli żądanie się powiedzie przekierowujemy użytkownika do pulpitu. Jeżeli logowanie nie powiedzie się wyświetlamy użytkownikowi stosowny komunikat.
 Wykorzystywane metody backendu:
-Logowanie użytkownika do aplikacji (student, nauczyciel, admin)
+Logowanie użytkownika do aplikacji (student, nauczyciel
 userLogin (loginName: string, password: string): Promise <TokenResult> Przy prawidłowej odpowiedzi (udało się zalogować) biblioteka zadba o zapisanie tokenu w przeglądarce oraz jego odtworzenie przy restarcie aplikacji (odświeżeniu strony-sessionStorage)
 
 Pobiera informację o zalogowanym użytkowniku (userld = undefined):
