@@ -25,39 +25,48 @@ import { ref } from "vue"
 import { Backend } from "@/main"
 import {jwtDecode} from "jwt-decode"
 import { useRouter } from "vue-router"
-import { useUserStore } from "@/stores/user"
+import {createUser} from "@/data/user"
+
 
 const username = ref("")
 const password = ref("")
 const error = ref("")
 const router = useRouter()
-const userStore = useUserStore()
+const user = createUser()
+
 
 async function login() {
   error.value = ""
   try {
     const response = await Backend.userLogin(username.value, password.value)
 
-    // Dekodujemy token
+    //uzylem chata gpt z zapytaniem jak rozkodowac token jwt oraz po rozkodowaniu jak sie dostac do "sub"
     const decoded: any = jwtDecode(response.token!)
-    const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-    const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-    const role = decoded[roleClaim]
-    const usernameFromToken = decoded[nameClaim]
+    const userId = decoded.sub;
+   
+    const data_user = await Backend.userGet(userId);
+    console.log(data_user)
+   user.setUser(
+    response.token!,
+    data_user.name || '',
+    data_user.surname || '',
+    data_user.isStudent ?? false,
+    data_user.isTeacher ?? false,
+    data_user.student || null,
+    data_user.teacher || null
+)
 
-    // Zapis w Pinia
-    userStore.setUser(response.token!, usernameFromToken, role)
+   if(data_user.isTeacher) {
+  console.log("Przekierowanie do /teacher");
+  router.push("/teacher")
+} else if(data_user.isStudent) {
+  console.log("Przekierowanie do /student");
+  router.push("/student")
+} else {
+  error.value = "Błąd logowania"
+}
 
-    console.log("Zalogowano:", usernameFromToken, role)
-
-    // Przekierowanie po roli
-    if (role === "student") {
-      router.push("/student")
-    } else if (role === "teacher") {
-      router.push("/teacher")
-    }
-
-  } catch (err: any) {
+  } catch {
     error.value = "Błąd logowania"
   }
 }
