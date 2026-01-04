@@ -25,14 +25,14 @@ import { ref } from "vue"
 import { Backend } from "@/main"
 import {jwtDecode} from "jwt-decode"
 import { useRouter } from "vue-router"
-import {createUser} from "@/data/user"
+
 
 
 const username = ref("")
 const password = ref("")
 const error = ref("")
 const router = useRouter()
-const user = createUser()
+
 
 
 async function login() {
@@ -45,16 +45,9 @@ async function login() {
     const userId = decoded.sub;
    
     const data_user = await Backend.userGet(userId);
-    console.log(data_user)
-   user.setUser(
-    response.token!,
-    data_user.name || '',
-    data_user.surname || '',
-    data_user.isStudent ?? false,
-    data_user.isTeacher ?? false,
-    data_user.student || null,
-    data_user.teacher || null
-)
+    sessionStorage.setItem('user', JSON.stringify({...data_user, token: response.token}))
+    console.log({...data_user, token: response.token})
+
 
    if(data_user.isTeacher) {
   console.log("Przekierowanie do /teacher");
