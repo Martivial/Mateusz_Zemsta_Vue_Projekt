@@ -6,7 +6,7 @@
 
       <div class="d-flex align-items-center">
       <img src="@/assets/icon.png" style="height:80px">
-      <h3 class="">Pulpit wykładowcy</h3>
+      <h3 class="">Panel wykładowcy</h3>
     </div>
 
   <div class="d-flex align-items-center gap-3 " >
@@ -35,6 +35,17 @@
     </div>
 </div>
 
+ <div class="" v-for="lesson in Subjects" :key="lesson.courseSessionId"> 
+
+    <div class="bg light mt-3 border rounded row mx-auto d-flex flex-column p-3" style="max-width:1200px">
+      <span class="bg-warning rounded py-1" style="max-width:200px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
+        <h5 class="pt-2">{{ lesson.courseName }}</h5>
+          <span class="">{{lesson.courseGroupName }}</span>
+          <span class="" >{{formatDate2(lesson.dateStart)}}</span>
+          <span>{{lesson.locationName}}</span>
+    </div>
+
+  </div>
 
 
 </template>
@@ -109,19 +120,19 @@ const filter = ref('all')
   }
     })
   })
+  function formatDate(start: Date, end: Date)
+   {
+      const day = start.toLocaleString('pl-PL', {weekday:'long'})
+      const sTime = start.toLocaleString('pl-PL', {hour: '2-digit', minute: '2-digit'})
+      const eTime = end.toLocaleString('pl-PL', {hour: '2-digit', minute: '2-digit'} )
+      return `${day} ${sTime} - ${eTime}`
+    }
+  
+    function formatDate2(date: Date)
+   {
+      const month = date.toLocaleString('pl-PL', { day: '2-digit', month:'2-digit', year: 'numeric'})
 
-  function formatDayTime(date: Date) {
-  const options: Intl.DateTimeFormatOptions = { weekday: 'long', hour: '2-digit', minute: '2-digit' }
-  return new Date(date).toLocaleString('pl-PL', options)
-}
-
-function formatTime(date: Date) {
-  const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' }
-  return new Date(date).toLocaleTimeString('pl-PL', options)
-}
-
-function openDetails(session: any) {
-  alert(`Szczegóły zajęć:\n${session.courseName}\n${session.courseGroupName}\nLokalizacja: ${session.locationName}`)
-}
+      return  `${month}`
+    }
 
 </script>
