@@ -21,7 +21,6 @@
     <div>
     <h5>Filtry</h5>
     <select class="form-select" v-model="filter">
-      <option value="month">Bieżący miesiąc</option>
       <option value="today">Dzisiaj</option>
       <option value="week">Bieżący tydzień</option>
       <option value="future">Przyszłe</option>
@@ -35,14 +34,14 @@
     </div>
 </div>
 
- <div class="" v-for="lesson in Subjects" :key="lesson.courseSessionId"> 
+ <div class="" v-for="lesson in Subjects" :key="lesson.courseSessionId" @click="navDetails(lesson.courseSessionId)"> 
 
     <div class="bg light mt-3 border rounded row mx-auto d-flex flex-column p-3" style="max-width:1200px">
-      <span class="bg-warning rounded py-1" style="max-width:200px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
+      <span class="bg-warning rounded py-1" style="max-width:180px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
         <h5 class="pt-2">{{ lesson.courseName }}</h5>
-          <span class="">{{lesson.courseGroupName }}</span>
-          <span class="" >{{formatDate2(lesson.dateStart)}}</span>
+          <span class="align-self-end">{{lesson.courseGroupName }}</span>
           <span>{{lesson.locationName}}</span>
+             <span class="" >{{formatDate2(lesson.dateStart)}}</span>
     </div>
 
   </div>
@@ -98,15 +97,7 @@ const filter = ref('all')
       if(filter.value === 'future') { return date_subject > now}
       if(filter.value === 'past') {return date_subject < now}
 
-     if (filter.value === 'month') {
-       const startMonth = new Date(now)
-        startMonth.setHours(0,0,0,0)
-
-       const endMonth = new Date(startMonth.getFullYear(), startMonth.getMonth() + 1, 0)
-       endMonth.setHours(23,59,59,999)
-
-        return date_subject >= startMonth && date_subject <= endMonth
-       }
+  
 
      if (filter.value === 'week') {
     const startWeek = new Date(now)  // dziś
@@ -135,4 +126,8 @@ const filter = ref('all')
       return  `${month}`
     }
 
+    function navDetails(sessionId: number)
+    {
+      router.push({name: 'TeacherDetails', params: {id: sessionId}})
+    }
 </script>
