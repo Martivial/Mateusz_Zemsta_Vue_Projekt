@@ -29,7 +29,7 @@
     </select>
   </div>
    <div class="d-flex align-items-center gap-2">
-      <input type="text" class="form-control" placeholder="Szukaj po przedmiocie lub lokalizacji"">
+      <input type="text" class="form-control" placeholder="Szukaj po przedmiocie lub lokalizacji">
       <button class="btn btn-primary">Szukaj</button>
     </div>
 </div>
@@ -96,8 +96,6 @@ const filter = ref('all')
       if(filter.value === 'today') { return x.dateStart.toDateString() === now.toDateString()}
       if(filter.value === 'future') { return date_subject > now}
       if(filter.value === 'past') {return date_subject < now}
-
-  
 
      if (filter.value === 'week') {
     const startWeek = new Date(now)  // dziś
