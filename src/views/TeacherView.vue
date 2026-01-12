@@ -28,16 +28,15 @@
       <option value="all">Wszystkie</option>
     </select>
   </div>
-   <div class="d-flex align-items-center gap-2">
-      <input type="text" class="form-control" placeholder="Szukaj po przedmiocie lub lokalizacji">
-      <button class="btn btn-primary">Szukaj</button>
+   <div style="max-width:300px">
+      <input type="text" v-model="searchText" class="form-control" placeholder="Przedmiot, grupa, lokalizacja" style="width: 280px;">
     </div>
 </div>
 
- <div class="" v-for="lesson in Subjects" :key="lesson.courseSessionId" @click="navDetails(lesson.courseSessionId)"> 
+ <div v-for="lesson in Subjects" :key="lesson.courseSessionId" @click="navDetails(lesson.courseSessionId)"> 
 
     <div class="bg light mt-3 border rounded row mx-auto d-flex flex-column p-3" style="max-width:1200px">
-      <span class="bg-warning rounded py-1" style="max-width:180px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
+      <span class="rounded py-1 " :class="lesson.dateEnd < new Date() ? 'bg-secondary text-white' : 'bg-warning'" style="max-width:190px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
         <h5 class="pt-2">{{ lesson.courseName }}</h5>
           <span class="align-self-end">{{lesson.courseGroupName }}</span>
           <span>{{lesson.locationName}}</span>
@@ -62,6 +61,7 @@ const router = useRouter()
 const user = ref<any>(null)
 const sessions = ref<any[]>([])
 const filter = ref('all')
+const searchText = ref('')
 
 
   onMounted( function() {
@@ -91,23 +91,37 @@ const filter = ref('all')
     return sessions.value.filter(x => {
       
       const now = new Date()
-      const date_subject = x.dateStart  
-
-      if(filter.value === 'today') { return x.dateStart.toDateString() === now.toDateString()}
-      if(filter.value === 'future') { return date_subject > now}
-      if(filter.value === 'past') {return date_subject < now}
+      const date_subject = x.dateStart
+       
+      let filterMatch = false;
+      if(filter.value === 'today') { filterMatch= x.dateStart.toDateString() === now.toDateString()}
+      if(filter.value === 'future') { filterMatch= date_subject > now}
+      if(filter.value === 'past') {filterMatch = date_subject < now}
 
      if (filter.value === 'week') {
-    const startWeek = new Date(now)  // dziś
-    startWeek.setHours(0,0,0,0)      // początek dnia
+    const startWeek = new Date(now)  
+    startWeek.setHours(0,0,0,0)      
 
-    const endWeek = new Date(now)    // niedziela
-    endWeek.setDate(now.getDate() + (7 - now.getDay()))  // ile dni do niedzieli
-    endWeek.setHours(23,59,59,999)  // koniec dnia
+    const endWeek = new Date(now)    
+    endWeek.setDate(now.getDate() + (7 - now.getDay()))  
+    endWeek.setHours(23,59,59,999)  
 
     return date_subject >= startWeek && date_subject <= endWeek
   }
-    })
+    if(filter.value === "all") {filterMatch= true}
+
+  let textMatch = true;
+
+  if(searchText.value.trim() !== '') {
+    const text = searchText.value.toLowerCase()
+    textMatch =  x.courseName.toLowerCase().includes(text) ||
+    x.courseGroupName.toLowerCase().includes(text) ||
+    x.locationName.toLowerCase().includes(text)
+  }
+
+  return filterMatch && textMatch
+})
+
   })
   function formatDate(start: Date, end: Date)
    {
@@ -128,4 +142,6 @@ const filter = ref('all')
     {
       router.push({name: 'TeacherDetails', params: {id: sessionId}})
     }
+
+  
 </script>

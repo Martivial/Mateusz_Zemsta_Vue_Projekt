@@ -8,7 +8,7 @@ const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', name: 'login', component: LoginView },
   { path: '/student', component: StudentView, meta: { role: "student" } },
-  { path: '/teacher', component: TeacherView, meta: { role: "teacher" } },
+  { path: '/teacher', name: 'TeacherView', component: TeacherView, meta: { role: "teacher" } },
   { path: '/teacher/session/:id', name: 'TeacherDetails', component: TeacherDetails }
 ]
 
