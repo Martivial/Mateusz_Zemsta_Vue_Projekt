@@ -12,7 +12,7 @@
           <label class="form-label">Hasło</label>
           <input v-model="password" type="password" class="form-control" placeholder="Podaj hasło" required />
         </div>
-
+        
         <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
 
         <p v-if="error" class="text-danger mt-3">{{ error }}</p>
@@ -41,20 +41,16 @@ async function login() {
    
     const data_user = await Backend.userGet(userId);
     sessionStorage.setItem('user', JSON.stringify({...data_user, token: response.token}))
-    console.log({...data_user, token: response.token})
-
 
    if(data_user.isTeacher) {
-  console.log("Przekierowanie do /teacher");
   router.push("/teacher")
 } else if(data_user.isStudent) {
-  console.log("Przekierowanie do /student");
   router.push("/student")
 } else {
   error.value = "Błąd logowania"
 }
-
-  } catch {
+}
+catch {
     error.value = "Błąd logowania"
   }
 }

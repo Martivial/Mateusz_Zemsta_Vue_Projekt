@@ -1,21 +1,7 @@
 <template>
 
 
-  <header class="border-bottom">
-    <div class="d-flex justify-content-between align-items-center p-3 mx-auto " style="max-width:1200px">
-
-      <div class="d-flex align-items-center">
-      <img src="@/assets/icon.png" style="height:80px">
-      <h3 class="">Panel wykładowcy</h3>
-    </div>
-
-  <div class="d-flex align-items-center gap-3 " >
-        <p class="mb-0">{{ user?.name }} {{ user?.surname }} </p>
-        <button class="btn btn-outline-danger btn-md" @click="logout">Wyloguj</button>
-    </div>
-    </div>
-  </header>
-  
+ <AppHeader title ="Panel wykładowcy" />
 
    <div class="d-flex justify-content-between align-items-center bg-light p-3 border mx-auto mt-3 rounded" style="max-width:1200px">
     <div>
@@ -55,6 +41,7 @@ import {useRouter} from 'vue-router'
 import {Backend} from "@/main"
 import {dateReviver} from '@/helpers/JsonHelpers'
 import {computed } from 'vue'
+import AppHeader from '@/components/AppHeader.vue'
 
 
 const router = useRouter()
@@ -64,18 +51,8 @@ const filter = ref('all')
 const searchText = ref('')
 
 
-  onMounted( function() {
-    const user_data = sessionStorage.getItem('user')
-    if(user_data) { user.value = JSON.parse(user_data)}
-   console.log(user_data)
-  
-  loadSubjects()
-  })
+  onMounted(() => {loadSubjects()})
 
-  function logout() {
-    sessionStorage.removeItem('user')
-    router.push('/login')
-  }
 
   async function loadSubjects() {
     try {

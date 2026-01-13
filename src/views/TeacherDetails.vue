@@ -1,20 +1,7 @@
 <template>
 
 
-  <header class="border-bottom">
-    <div class="d-flex justify-content-between align-items-center pt-2 pb-2 mx-auto" style="max-width:1200px">
-
-      <div class="d-flex align-items-center">
-      <img src="@/assets/icon.png" class="m-0" style="height:80px" @click="goTeacherView">
-      <h3 class="">Panel wykładowcy</h3>
-    </div>
-
-  <div class="d-flex align-items-center gap-3 " >
-        <p class="mb-0">{{ user?.name }} {{ user?.surname }} </p>
-        <button class="btn btn-outline-danger btn-md" @click="logout">Wyloguj</button>
-    </div>
-    </div>
-  </header>
+  <AppHeader title="Panel wykładowcy"/>
    
      <div class="d-flex justify-content-between align-items-center mx-auto mt-3" style="max-width:1200px">
 
@@ -94,6 +81,7 @@ import {onMounted} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 import {Backend} from "@/main"
 import QrcodeVue from 'qrcode.vue'
+import AppHeader from '@/components/AppHeader.vue'
 
 
     const route = useRoute();
