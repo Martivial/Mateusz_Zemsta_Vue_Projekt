@@ -2,8 +2,8 @@
 
 
   <AppHeader title="Panel wykładowcy"/>
-   
-     <div class="d-flex justify-content-between align-items-center mx-auto mt-3" style="max-width:1200px">
+   <div class="mx-auto" style="max-width:1200px">
+     <div class="d-flex justify-content-between align-items-center mx-auto mt-3" >
 
       <div v-if="session">
       <h3>{{ session.courseName }}</h3>
@@ -20,7 +20,7 @@
     </div>
     </div>
 
-    <table class="table mx-auto mt-3 table-striped" style="max-width:1200px">
+    <table class="table mt-3 table-striped">
   <thead class="table-dark">
     <tr>
       <th>Imię Nazwisko</th>
@@ -35,84 +35,40 @@
       <td>
         <span v-if="a.wasUserPresent" class="bg-success rounded p-1 small text-white fw-bold">Obecny</span>
         <span v-else class="bg-danger rounded p-1 small text-white fw-bold">Nieobecny</span>
-      </td>
-     
+        </td>
     </tr>
   </tbody>
 </table>
-
-<div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true">
-   <div class="modal-dialog modal-md modal-dialog-centered">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title">Skaner obecności</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <p class="text-muted">
-          Do sprawdzania obecności wymagane jest urządzenie wyposażone
-          w kamerę (tablet lub telefon). Zeskanuj na nim poniższy kod QR
-          lub otwórz adres url, który możesz skopiować poniższym przyciskiem.
-          Sprawdzenie obecności polega na umieszczeniu w polu widzenia kamery
-          skanera kodu QR wygenerowanego na ekranie telefonu uczestnika.
-        </p>
-
-        <div class="text-center"><qrcode-vue v-if="scannerUrl" :value="scannerUrl" :size="300" /> </div>
-        <div class="text-center">
-        <button class="btn btn-dark">Skopiuj adres </button>
-      </div>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
-      </div>
-      </div>
-      </div>
 </div>
-  
+  <ScannerQrCode :scannerUrl="scannerUrl" />
   </template>
 
   <script setup lang="ts">
 
 import {ref} from 'vue'
 import {onMounted} from 'vue'
-import {useRouter, useRoute} from 'vue-router'
+import { useRoute} from 'vue-router'
 import {Backend} from "@/main"
-import QrcodeVue from 'qrcode.vue'
 import AppHeader from '@/components/AppHeader.vue'
-
+import ScannerQrCode from '@/components/ScannerQrCode.vue'
 
     const route = useRoute();
-    const router = useRouter();
-    const user = ref<any> (null)
     const session = ref<any> (null)
     const attendance = ref<any[]> ([])
     const sessionId = Number(route.params.id)
     const scannerUrl = ref<string>('')
-    
+      console.log(attendance)
 
     onMounted(() => {
-        loadUser()
         loadSubjects()
         loadAtt()
-        setInterval(()=> {loadAtt()}, 5000)
+        setInterval(()=> {loadAtt()}, 2000)
     })
-    function loadUser() {
-      const user_data = sessionStorage.getItem('user')
-      if(user_data) {user.value = JSON.parse(user_data)}
-    }
+ 
 
-    function goTeacherView() {router.push({name: 'TeacherView' })}
-    
-    function logout() {
-      sessionStorage.removeItem('user')
-      router.push('/login')
-    }
-    async function loadSubjects() {
-      session.value = await Backend.courseTeacherSessionGet(sessionId);
-      console.log(session.value)
+    function loadSubjects() {
+      Backend.courseTeacherSessionGet(sessionId)
+      .then(result => {session.value = result})
     }
     
      function formatDate(start:Date, end: Date) {
@@ -122,20 +78,17 @@ import AppHeader from '@/components/AppHeader.vue'
          ${end.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}`
       }
      }
-     async function loadAtt() {
-      if(!sessionId) return;
-      
-      try {
-        attendance.value = await Backend.courseSessionAttendanceListGet(sessionId)
-      }
-      catch (e) {
-        console.error(`Blad pobierania obecnosci dla sesji ${sessionId}`, e);
-      }
-      }
 
-      async function openScanner() {
-        const tokenResult = await Backend.courseSessionAttendanceScannerTokenGet(sessionId)
-        scannerUrl.value = `${window.location.origin}/scanner/${tokenResult.token}`
-      }
-      
+    function loadAtt() {
+      Backend.courseSessionAttendanceListGet(sessionId)
+      .then(result => {attendance.value = result})
+      .catch(e => console.log("Nie udalo sie wygenerowac listy obecnosci" +e))
+    }
+
+    function openScanner() {
+      Backend.courseSessionAttendanceScannerTokenGet(sessionId)
+      .then(tokenResult => {scannerUrl.value = `${window.location.origin}/scanner/${tokenResult.token}`})
+      .catch(e => console.log("Nie udało sie wygenerowac tokenu"+ e))
+
+    }
   </script>

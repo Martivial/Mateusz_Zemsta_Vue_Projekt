@@ -40,7 +40,7 @@ async function login() {
     const userId = decoded.sub;
    
     const data_user = await Backend.userGet(userId);
-    sessionStorage.setItem('user', JSON.stringify({...data_user, token: response.token}))
+    sessionStorage.setItem('user', JSON.stringify(data_user))
 
    if(data_user.isTeacher) {
   router.push("/teacher")
