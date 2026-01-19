@@ -40,7 +40,7 @@
   </tbody>
 </table>
 </div>
-  <ScannerQrCode :scannerUrl="scannerUrl" />
+  <ScannerQrModal :scannerUrl="scannerUrl" />
   </template>
 
   <script setup lang="ts">
@@ -50,14 +50,13 @@ import {onMounted} from 'vue'
 import { useRoute} from 'vue-router'
 import {Backend} from "@/main"
 import AppHeader from '@/components/AppHeader.vue'
-import ScannerQrCode from '@/components/ScannerQrCode.vue'
+import ScannerQrModal from '@/components/ScannerQrModal.vue'
 
     const route = useRoute();
     const session = ref<any> (null)
     const attendance = ref<any[]> ([])
     const sessionId = Number(route.params.id)
     const scannerUrl = ref<string>('')
-      console.log(attendance)
 
     onMounted(() => {
         loadSubjects()

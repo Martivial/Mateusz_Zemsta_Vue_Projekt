@@ -30,7 +30,7 @@ const username = ref("")
 const password = ref("")
 const error = ref("")
 const router = useRouter()
-
+console.log(localStorage.getItem('attend-me:deviceAuthData'))
 async function login() {
   error.value = ""
   try {
