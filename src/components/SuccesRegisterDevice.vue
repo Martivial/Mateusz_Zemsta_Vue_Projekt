@@ -4,11 +4,25 @@
   <img src="../assets/icon.png"/> 
   <h2 fw-bold>Urządzenie zarejestrowane</h2>
   <p>Przejdź do skanowania objecności lub do pulpitu (wymagane logowanie).</p>
-  <button class="btn btn-success " style="width:150px">Skanuj obecność</button>
-  <button class="btn btn-warning btn-md mt-2"style="width:150px">Otworz pulpit</button>
-  <button class="btn btn-danger btn-md mt-2">Resetuj</button>
+  <button class="btn btn-success " style="width:150px" @click="goToScan">Skanuj obecność</button>
+  <button class="btn btn-warning btn-md mt-2"style="width:150px" @click="goToLogin">Otworz pulpit</button>
+  <button class="btn btn-danger btn-md mt-2" @click="resetDevice">Resetuj</button>
 </div>
 </template>
 <script lang setup="ts">
 
+import {useRouter} from 'vue-router'
+import { Backend } from '@/main'
+
+const router = useRouter();
+
+function resetDevice() {
+  Backend.deviceAuthReset()
+}
+function goToLogin() {
+  router.push("/login")
+}
+function goToScan() {
+  router.push("/ticket")
+}
 </script>

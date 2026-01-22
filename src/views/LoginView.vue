@@ -2,7 +2,7 @@
     <main class="d-flex justify-content-center align-items-center vh-100">
       <form class="border p-4 rounded shadow-sm" v-on:submit.prevent="login" style="width: 100%; max-width: 400px;">
         <img src="../assets/icon.png" class="d-block mx-auto mb-2">
-        <h2 class="mb-4 text-center">Logowanie</h2>
+      
         <div class="mb-3">
           <label class="form-label">Login</label>
           <input v-model="username" type="text" class="form-control" placeholder="Podaj twój login" required />
@@ -14,7 +14,7 @@
         </div>
         
         <button type="submit" class="btn btn-primary w-100">Zaloguj</button>
-
+        <a v-if="deviceRegistered" href="/ticket" class="btn btn-success w-100 mt-3">Skanuj obecność</a>
         <p v-if="error" class="text-danger mt-3">{{ error }}</p>
       </form>
     </main>
@@ -26,11 +26,16 @@ import { Backend } from "@/main"
 import {jwtDecode} from "jwt-decode"
 import { useRouter } from "vue-router"
 
-const username = ref("")
-const password = ref("")
-const error = ref("")
-const router = useRouter()
-console.log(localStorage.getItem('attend-me:deviceAuthData'))
+  const username = ref("")
+  const password = ref("")
+  const error = ref("")
+  const router = useRouter()
+  const deviceRegistered = ref(false)
+
+  if(localStorage.getItem('attend-me:deviceAuthData')!== null) {
+    deviceRegistered.value = true;
+  }
+
 async function login() {
   error.value = ""
   try {
