@@ -16,7 +16,7 @@
                 Wystąpił błąd podczas pobierania kodu, 
                 sprawdź poprawność działania sieci oraz 
                 czy twoje urządzenie jest prawidłowo zarejestrowane. 
-                W razie wątpliwości poproś wykładowcę o pomoc."
+                W razie wątpliwości poproś wykładowcę o pomoc.
             </p>
         </div>
         </div>

@@ -36,29 +36,32 @@ import { useRouter } from "vue-router"
     deviceRegistered.value = true;
   }
 
-async function login() {
+function login() {
   error.value = ""
-  try {
-    const response = await Backend.userLogin(username.value, password.value)
 
-    const decoded: any = jwtDecode(response.token!)
-    const userId = decoded.sub;
-   
-    const data_user = await Backend.userGet(userId);
-    sessionStorage.setItem('user', JSON.stringify(data_user))
+  Backend.userLogin(username.value, password.value)
+    .then(response => {
+      const decoded: any = jwtDecode(response.token!)
+      const userId = decoded.sub
 
-   if(data_user.isTeacher) {
-  router.push("/teacher")
-} else if(data_user.isStudent) {
-  router.push("/student")
-} else {
-  error.value = "Błąd logowania"
+      return Backend.userGet(userId)
+    })
+    .then(data_user => {
+      sessionStorage.setItem('user', JSON.stringify(data_user))
+
+      if (data_user.isTeacher) {
+        router.push("/teacher")
+      } else if (data_user.isStudent) {
+        router.push("/student")
+      } else {
+        error.value = "Błąd logowania"
+      }
+    })
+    .catch(() => {
+      error.value = "Błąd logowania"
+    })
 }
-}
-catch {
-    error.value = "Błąd logowania"
-  }
-}
+
 </script>
 
 

@@ -17,7 +17,10 @@ import { Backend } from '@/main'
 const router = useRouter();
 
 function resetDevice() {
+  if (!window.confirm('Czy na pewno chcesz zresetować urządzenie?')) return
+
   Backend.deviceAuthReset()
+  router.replace('/login')
 }
 function goToLogin() {
   router.push("/login")

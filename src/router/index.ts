@@ -5,6 +5,8 @@ import TeacherView from "../views/TeacherView.vue"
 import TeacherDetails from "../views/TeacherDetails.vue"
 import DeviceRegister from "../views/DeviceRegister.vue"
 import Ticket from '@/views/Ticket.vue'
+import Scanner from '../views/ScannerView.vue'
+import StudentDetails from '../views/StudentDetails.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -13,7 +15,9 @@ const routes = [
   { path: '/teacher', name: 'TeacherView', component: TeacherView, meta: { role: "teacher" } },
   { path: '/teacher/session/:id', name: 'TeacherDetails', component: TeacherDetails },
   { path: '/device/register/:token', name: 'DeviceRegister', component: DeviceRegister},
-  { path: '/ticket', name: 'ticket', component: Ticket}
+  { path: '/ticket', name: 'ticket', component: Ticket},
+  { path: '/scanner/:token', name: 'scanner', component: Scanner},
+  { path: '/student/session/:id', name: 'StudentDetails', component: StudentDetails },
 ]
 
 const router = createRouter({

@@ -3,33 +3,44 @@
 
  <AppHeader title ="Panel wykładowcy" />
 
-   <div class="d-flex justify-content-between align-items-center bg-light p-3 border mx-auto mt-3 rounded" style="max-width:1200px">
-    <div>
-    <h5>Filtry</h5>
-    <select class="form-select" v-model="filter">
-      <option value="today">Dzisiaj</option>
-      <option value="week">Bieżący tydzień</option>
-      <option value="future">Przyszłe</option>
-      <option value="past">Minione</option>
-      <option value="all">Wszystkie</option>
-    </select>
-  </div>
-   <div style="max-width:300px">
-      <input type="text" v-model="searchText" class="form-control" placeholder="Przedmiot, grupa, lokalizacja" style="width: 280px;">
-    </div>
-</div>
+   <div class="container mt-3">
+      <div class="bg-light p-3 border rounded">
+        <h6 class="mb-2">Filtry</h6>
 
- <div v-for="lesson in Subjects" :key="lesson.courseSessionId" @click="navDetails(lesson.courseSessionId)"> 
+        <select class="form-select mb-2" v-model="filter">
+          <option value="today">Dzisiaj</option>
+          <option value="week">Bieżący tydzień</option>
+          <option value="future">Przyszłe</option>
+          <option value="past">Minione</option>
+          <option value="all">Wszystkie</option>
+        </select>
 
-    <div class="bg light mt-3 border rounded row mx-auto d-flex flex-column p-3" style="max-width:1200px">
-      <span class="rounded py-1 " :class="lesson.dateEnd < new Date() ? 'bg-secondary text-white' : 'bg-warning'" style="max-width:190px;">{{formatDate(lesson.dateStart, lesson.dateEnd)}}</span>
-        <h5 class="pt-2">{{ lesson.courseName }}</h5>
-          <span class="align-self-end">{{lesson.courseGroupName }}</span>
-          <span>{{lesson.locationName}}</span>
-             <span class="" >{{formatDate2(lesson.dateStart)}}</span>
+        <input type="text" v-model="searchText" class="form-control" placeholder="Przedmiot, lokalizacja..."/>
+      </div>
     </div>
 
-  </div>
+ <div class="container mt-3 mb-5">
+      <ul class="list-unstyled">
+        <li v-for="lesson in Subjects" :key="lesson.courseSessionId">
+          <div class="card mb-2 lesson-card" @click="navDetails(lesson.courseSessionId)">
+            <div class="card-body p-3">
+
+              <span class="badge mb-2":class="lesson.dateEnd < new Date() ? 'bg-secondary' : 'bg-warning text-dark'">
+                {{ formatDate(lesson.dateStart, lesson.dateEnd) }}
+              </span>
+
+              <h6 class="mb-1">{{ lesson.courseName }}</h6>
+              <small class="text-muted">{{ lesson.locationName }}</small><br />
+              <small>{{ lesson.courseGroupName}}</small><br>
+              <small>{{ formatDate2(lesson.dateStart) }}</small>
+
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  
 
 
 </template>
@@ -45,7 +56,6 @@ import AppHeader from '@/components/AppHeader.vue'
 
 
 const router = useRouter()
-const user = ref<any>(null)
 const sessions = ref<any[]>([])
 const filter = ref('all')
 const searchText = ref('')
@@ -58,7 +68,7 @@ const searchText = ref('')
     try {
       const response = await Backend.courseTeacherSessionsGet({pageNumber:1, pageSize:99999})
       sessions.value = JSON.parse(JSON.stringify(response.items), dateReviver)
-      console.log(sessions.value)
+
     }
     catch { console.error("blad pobierania zajec")}
   }

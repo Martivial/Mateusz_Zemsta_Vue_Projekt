@@ -1,135 +1,148 @@
 <template>
-    <div><AppHeader title="Panel studenta" /></div>
-     <div class="d-flex justify-content-between align-items-center bg-light p-3 border mx-auto mt-3 rounded" style="max-width:1200px">
-    <div>
-    <h5>Filtry</h5>
-    <select class="form-select" v-model="filter">
-      <option value="today">Dzisiaj</option>
-      <option value="week">Bieżący tydzień</option>
-      <option value="future">Przyszłe</option>
-      <option value="past">Minione</option>
-      <option value="all">Wszystkie</option>
-    </select>
+  <div>
+    <AppHeader title="Panel studenta" />
+
+
+    <div class="container mt-2 d-flex justify-content-center">
+      <a
+        v-if="deviceAuthn"
+        href="/ticket"
+        class="btn btn-success text-center mx-auto py-3 sticky-scan shadow ">
+        Skanuj obecność
+      </a>
+    </div>
+    <div class="container mt-3">
+      <div class="bg-light p-3 border rounded">
+        <h6 class="mb-2">Filtry</h6>
+
+        <select class="form-select mb-2" v-model="filter">
+          <option value="today">Dzisiaj</option>
+          <option value="week">Bieżący tydzień</option>
+          <option value="future">Przyszłe</option>
+          <option value="past">Minione</option>
+          <option value="all">Wszystkie</option>
+        </select>
+
+        <input type="text" v-model="searchText" class="form-control" placeholder="Przedmiot, lokalizacja..."/>
+      </div>
+    </div>
+
+
+    <div class="container mt-3 mb-5">
+      <ul class="list-unstyled">
+        <li v-for="lesson in Subjects" :key="lesson.courseSessionId">
+          <div class="card mb-2 lesson-card" @click="navDetails(lesson.courseGroupId)">
+            <div class="card-body p-3">
+
+              <span class="badge mb-2":class="lesson.dateEnd < now ? 'bg-secondary' : 'bg-warning text-dark'">
+                {{ formatDate(lesson.dateStart, lesson.dateEnd) }}
+              </span>
+
+              <h6 class="mb-1">{{ lesson.courseName }}</h6>
+              <small class="text-muted">{{ lesson.locationName }}</small><br />
+              <small>{{ formatDate2(lesson.dateStart) }}</small>
+
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
   </div>
-   <div style="max-width:300px">
-      <input type="text" v-model="searchText" class="form-control" placeholder="Przedmiot, grupa, lokalizacja" style="width: 280px;">
-    </div>
-</div>
-
- <ul class="list-unstyled">
-  <li 
-    v-for="lesson in Subjects" 
-    :key="lesson.courseSessionId" 
-    @click="navDetails(lesson.courseSessionId)" 
-    class="mb-0"
-  >
-    <div 
-      class="bg-light border rounded row mx-auto d-flex flex-column p-3 mb-0" 
-      style="max-width:1200px;"
-    >
-      <span 
-        class="rounded py-1 d-inline-block" 
-        :class="lesson.dateEnd < new Date() ? 'bg-secondary text-white' : 'bg-warning'" 
-        style="max-width:190px;"
-      >
-        {{ formatDate(lesson.dateStart, lesson.dateEnd) }}
-      </span>
-      <h5 class="pt-2">{{ lesson.courseName }}</h5>
-      <span>{{ lesson.locationName }}</span>
-      <span>{{ formatDate2(lesson.dateStart) }}</span>
-    </div>
-  </li>
-</ul>
-  
-
-
 </template>
-
 <script setup lang="ts">
-import {ref} from 'vue'
-import {onMounted} from 'vue'
-import {useRouter} from 'vue-router'
-import {Backend} from "@/main"
-import {dateReviver} from '@/helpers/JsonHelpers'
-import {computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
-
-
+import { Backend } from '@/main'
+import { dateReviver } from '@/helpers/JsonHelpers'
 
 const router = useRouter()
+
 const sessions = ref<any[]>([])
 const filter = ref('all')
 const searchText = ref('')
+const deviceAuthn = ref(false)
 
+const now = new Date()
 
-  onMounted(() => {loadSubjects()})
-
-
-  async function loadSubjects() {
-    try {
-      const response = await Backend.courseStudentSessionsGet({pageNumber:1, pageSize:99999})
-      sessions.value = JSON.parse(JSON.stringify(response.items), dateReviver)
-      console.log(sessions.value)
-    }
-    catch { console.error("blad pobierania zajec")}
-  }
-
-  const Subjects = computed(() => {
-
-    return sessions.value.filter(x => {
-      
-      const now = new Date()
-      const date_subject = x.dateStart
-       
-      let filterMatch = false;
-      if(filter.value === 'today') { filterMatch= x.dateStart.toDateString() === now.toDateString()}
-      if(filter.value === 'future') { filterMatch= date_subject > now}
-      if(filter.value === 'past') {filterMatch = date_subject < now}
-
-     if (filter.value === 'week') {
-    const startWeek = new Date(now)  
-    startWeek.setHours(0,0,0,0)      
-
-    const endWeek = new Date(now)    
-    endWeek.setDate(now.getDate() + (7 - now.getDay()))  
-    endWeek.setHours(23,59,59,999)  
-
-    return date_subject >= startWeek && date_subject <= endWeek
-  }
-    if(filter.value === "all") {filterMatch= true}
-
-  let textMatch = true;
-
-  if(searchText.value.trim() !== '') {
-    const text = searchText.value.toLowerCase()
-    textMatch =  x.courseName.toLowerCase().includes(text) ||
-    x.courseGroupName.toLowerCase().includes(text) ||
-    x.locationName.toLowerCase().includes(text)
-  }
-
-  return filterMatch && textMatch
+onMounted(() => {
+  loadSubjects()
+  deviceAuthn.value = !!localStorage.getItem('attend-me:deviceAuthData')
 })
 
+async function loadSubjects() {
+  try {
+    const response = await Backend.courseStudentSessionsGet({
+      pageNumber: 1,
+      pageSize: 99999
+    })
+    sessions.value = JSON.parse(JSON.stringify(response.items), dateReviver)
+  } catch {
+    alert('Błąd pobierania zajęć')
+  }
+}
+
+const Subjects = computed(() => {
+  return sessions.value.filter(x => {
+    const date = x.dateStart
+
+    let filterMatch = true
+
+    if (filter.value === 'today') {
+      filterMatch = date.toDateString() === now.toDateString()
+    }
+
+    if (filter.value === 'future') {
+      filterMatch = date > now
+    }
+
+    if (filter.value === 'past') {
+      filterMatch = date < now
+    }
+
+    if (filter.value === 'week') {
+      const startWeek = new Date(now)
+      startWeek.setHours(0, 0, 0, 0)
+
+      const endWeek = new Date(now)
+      endWeek.setDate(now.getDate() + (7 - now.getDay()))
+      endWeek.setHours(23, 59, 59, 999)
+
+      filterMatch = date >= startWeek && date <= endWeek
+    }
+
+    if (filter.value === 'all') {
+      filterMatch = true
+    }
+
+    let textMatch = true
+    if (searchText.value.trim()) {
+      const t = searchText.value.toLowerCase()
+      textMatch =
+        x.courseName.toLowerCase().includes(t) ||
+        x.courseGroupName.toLowerCase().includes(t) ||
+        x.locationName.toLowerCase().includes(t)
+    }
+
+    return filterMatch && textMatch
   })
-  function formatDate(start: Date, end: Date)
-   {
-      const day = start.toLocaleString('pl-PL', {weekday:'long'})
-      const sTime = start.toLocaleString('pl-PL', {hour: '2-digit', minute: '2-digit'})
-      const eTime = end.toLocaleString('pl-PL', {hour: '2-digit', minute: '2-digit'} )
-      return `${day} ${sTime} - ${eTime}`
-    }
-  
-    function formatDate2(date: Date)
-   {
-      const month = date.toLocaleString('pl-PL', { day: '2-digit', month:'2-digit', year: 'numeric'})
+})
 
-      return  `${month}`
-    }
+function formatDate(start: Date, end: Date) {
+  const day = start.toLocaleString('pl-PL', { weekday: 'long' })
+  const s = start.toLocaleString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+  const e = end.toLocaleString('pl-PL', { hour: '2-digit', minute: '2-digit' })
+  return `${day} ${s}–${e}`
+}
 
-    function navDetails(sessionId: number)
+function formatDate2(date: Date) {
+  return date.toLocaleDateString('pl-PL')
+}
+
+function navDetails(courseGroupId: number)
     {
-      router.push({name: 'TeacherDetails', params: {id: sessionId}})
+      router.push({name: 'StudentDetails', params: {id: courseGroupId}})
     }
 
 </script>
-

@@ -3,7 +3,7 @@
   <div class="pt-5 ps-5 pe-5 d-flex flex-column align-items-center">
     <img src="../assets/icon.png" style="font-size:80px;">
     <h2 class="mt-3 mb-2 fw-bold ">Rejestracja urządzenia</h2>
-    <p class="lead text-center ">
+    <p class="text-center "style="max-width:400px">
       Rejestrujesz urządzenie, którego będziesz używać do sprawdzania obecności.
       Uzupełnij poniższe dane i naciśnij przycisk "Rejestruj".
     </p>
@@ -41,7 +41,7 @@
     import {reactive} from 'vue'
     import {Backend} from "@/main"
     import { ref } from 'vue'
-    import SuccessRegisterDevice from '@/components/SuccesRegisterDevice.vue'
+    import SuccessRegisterDevice from '@/components/SuccessRegisterDevice.vue'
   
     const route = useRoute()
     const token = route.params.token as string
@@ -58,7 +58,7 @@
         Backend.userDeviceRegisterWithToken(token, deviceDTO) 
             .then(() => {registeredDevice.value = true})
             .catch((e) => {
-            console.error('Błąd rejestracji urządzenia:', e)
+            
             alert('Nie udało się zarejestrować urządzenia')
     })
         }
