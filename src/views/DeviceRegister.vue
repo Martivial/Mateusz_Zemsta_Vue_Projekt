@@ -41,7 +41,7 @@
     import {reactive} from 'vue'
     import {Backend} from "@/main"
     import { ref } from 'vue'
-    import SuccessRegisterDevice from '@/components/SuccessRegisterDevice.vue'
+    import SuccessRegisterDevice from '../components/SuccessRegisterDevice.vue'
   
     const route = useRoute()
     const token = route.params.token as string

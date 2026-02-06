@@ -16,7 +16,6 @@ export const useUser = defineStore('user', {
     actions: {
         loadUser() {
             const data = sessionStorage.getItem('user')
-            console.log(sessionStorage.getItem('user'))
             this.user= data ? JSON.parse(data) : null
         },
         logout() {
