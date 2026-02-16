@@ -1,48 +1,92 @@
-# 071_vue_app-AttendMe_backend_demo
+# 📚 AttendMe – QR Attendance System (Vue 3 + TypeScript)
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplikacja typu **Single Page Application (SPA)** do elektronicznego sprawdzania obecności studentów przy użyciu dynamicznych kodów QR.
 
-## Recommended IDE Setup
+Projekt został zrealizowany w ramach przedmiotu **Frameworki front-endowe** z wykorzystaniem **Vue 3 (Composition API) oraz TypeScript**.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+---
 
-## Recommended Browser Setup
+## 🚀 Opis projektu
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+AttendMe umożliwia szybkie, bezpieczne i zautomatyzowane rejestrowanie obecności na zajęciach.
 
-## Type Support for `.vue` Imports in TS
+### Jak działa system?
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+1. 👨‍🎓 Student generuje dynamiczny kod QR (odświeżany co 2 sekundy).
+2. 👨‍🏫 Wykładowca skanuje kod za pomocą kamery.
+3. 🔐 Backend weryfikuje token oraz przypisuje obecność do odpowiednich zajęć.
+4. ✅ Student otrzymuje informację zwrotną o poprawnym zarejestrowaniu obecności.
 
-## Customize configuration
+Aplikacja wykorzystuje autentykację tokenową **JWT** oraz rozróżnia role użytkowników:
+- Student
+- Wykładowca
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+## 🧑‍🏫 Funkcjonalności – Wykładowca
 
-```sh
+- 🔐 Logowanie do systemu
+- 📋 Pulpit z listą prowadzonych zajęć
+- 🔎 Filtrowanie zajęć (dziś, jutro, następny tydzień, minione, wszystkie)
+- 📄 Ekran szczegółów zajęć:
+  - Nazwa przedmiotu
+  - Grupa
+  - Termin
+  - Lista obecności (imię, nazwisko, nr indeksu, status)
+- 📷 Ekran skanowania kodów QR
+- 🔄 Automatyczne odświeżanie listy obecności
+- 🔗 Generowanie linku do ekranu skanowania
+
+---
+
+## 👨‍🎓 Funkcjonalności – Student
+
+- 🔐 Logowanie do systemu
+- 📱 Rejestracja urządzenia (aktywacja przez link)
+- 📋 Pulpit z listą zajęć
+- 🔎 Filtrowanie zajęć (zakres czasu, wyszukiwanie tekstowe)
+- 📄 Ekran szczegółów zajęć:
+  - Informacja o obecności
+  - Historia obecności
+  - Frekwencja całkowita
+  - % zaawansowania kursu
+- 📷 Generowanie dynamicznego kodu QR do rejestracji obecności
+- 🔄 Cykliczne pobieranie nowego ticketu (co 2 sekundy)
+
+---
+
+## 🔐 Autentykacja
+
+W aplikacji zastosowano autentykację tokenową **JWT**.
+
+- Po zalogowaniu użytkownik otrzymuje token zapisywany w `sessionStorage`
+- Student po rejestracji urządzenia otrzymuje dodatkowy token zapisywany w `localStorage`
+- Tokeny są automatycznie dołączane do żądań HTTP
+
+---
+
+## 🌐 Backend
+
+Aplikacja komunikuje się z backendem REST API:
+https://attendme-backend.runasp.net/
+
+## 🛠️ Technologie
+
+- Vue 3
+- Composition API
+- TypeScript
+- Vue Router
+- Vite
+- JWT Authentication
+- REST API
+- OpenAPI / NSwag
+- Biblioteki do generowania i skanowania QR
+
+---
+
+## 📦 Instalacja i uruchomienie
+
+### 1️⃣ Instalacja zależności
+```bash
 npm install
-```
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
